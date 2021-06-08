@@ -92,4 +92,33 @@ public class BeanContainer {
         return beanMap.keySet();
     }
 
+    public Set<Class<?>> getClassesByAnnotation(Class<? extends Annotation> annotation){
+        //1.获取beanMap的所有class对象
+        Set<Class<?>> keySet = getClasses();
+        if(ValidationUtil.isEmpty(keySet)){
+            log.warn("nothing in beanMap");
+            return null;
+        }
+        //2.通过注解筛选被注解标记的class对象，并添加到classSet里
+        Set<Class<?>> classSet = new HashSet<>();
+        for(Class<?> clazz : keySet){
+            //类是否有相关的注解标记
+            if(clazz.isAnnotationPresent(annotation)){
+                classSet.add(clazz);
+            }
+        }
+        return classSet.size() > 0? classSet: null;
+    }
+
+    /**
+     * 添加一个class对象及其Bean实例
+     *
+     * @param clazz Class对象
+     * @param bean  Bean实例
+     * @return 原有的Bean实例, 没有则返回null
+     */
+    public Object addBean(Class<?> clazz, Object bean) {
+        return beanMap.put(clazz, bean);
+    }
+
 }
